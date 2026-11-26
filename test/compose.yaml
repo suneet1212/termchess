@@ -1,0 +1,106 @@
+name: test-setup
+
+services:
+  peer1:
+    container_name: peer-only-firewall-1
+    image: python:3-alpine
+    network_mode: none
+    stdin_open: true
+    tty: true
+    volumes:
+      - type: volume
+        source: termchess-code
+        target: /tmp/code
+        read_only: true
+
+  peer2:
+    container_name: peer-only-firewall-2
+    image: python:3-alpine
+    network_mode: none
+    stdin_open: true
+    tty: true
+    volumes:
+      - type: volume
+        source: termchess-code
+        target: /tmp/code
+        read_only: true
+
+  peer3:
+    container_name: peer-nat-1
+    image: python:3-alpine
+    network_mode: none
+    stdin_open: true
+    tty: true
+    volumes:
+      - type: volume
+        source: termchess-code
+        target: /tmp/code
+        read_only: true
+
+  peer4:
+    container_name: peer-nat-2
+    image: python:3-alpine
+    network_mode: none
+    stdin_open: true
+    tty: true
+    volumes:
+      - type: volume
+        source: termchess-code
+        target: /tmp/code
+        read_only: true
+
+  peer5:
+    container_name: peer-nat-and-firewall-1
+    image: python:3-alpine
+    network_mode: none
+    stdin_open: true
+    tty: true
+    volumes:
+      - type: volume
+        source: termchess-code
+        target: /tmp/code
+        read_only: true
+
+  peer6:
+    container_name: peer-nat-and-firewall-2
+    image: python:3-alpine
+    network_mode: none
+    stdin_open: true
+    tty: true
+    volumes:
+      - type: volume
+        source: termchess-code
+        target: /tmp/code
+        read_only: true
+
+  peer7:
+    container_name: peer-cgnat-1
+    image: python:3-alpine
+    network_mode: none
+    stdin_open: true
+    tty: true
+    volumes:
+      - type: volume
+        source: termchess-code
+        target: /tmp/code
+        read_only: true
+
+  peer8:
+    container_name: peer-cgnat-2
+    image: python:3-alpine
+    network_mode: none
+    stdin_open: true
+    tty: true
+    volumes:
+      - type: volume
+        source: termchess-code
+        target: /tmp/code
+        read_only: true
+
+volumes:
+  termchess-code:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/sushant/projects/termchess # must be the absolute host path and already exist
