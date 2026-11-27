@@ -97,6 +97,18 @@ services:
         target: /tmp/code
         read_only: true
 
+  peer9:
+    container_name: peer-all-reachable
+    image: python:3-alpine
+    network_mode: none
+    stdin_open: true
+    tty: true
+    volumes:
+      - type: volume
+        source: termchess-code
+        target: /tmp/code
+        read_only: true
+
 volumes:
   termchess-code:
     driver: local

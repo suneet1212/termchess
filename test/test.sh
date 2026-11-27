@@ -38,9 +38,9 @@ create_router_and_connect_to_ns() {
 
 connect_container_to_router() {
     local pid=$1
-    local container_ip="$2"  # give a /24 IP address
+    local container_ip="$2"  # give a 192.168.1.0/24 IP address
     local router_id="$3"
-    local router_ns=router-"${router_id}"
+    local router_ns=r"${router_id}"
 
     # connect the container to the router
     ip link add v-router netns "${pid}" type veth peer name v"${pid}" netns "${router_ns}"
@@ -82,6 +82,7 @@ PEER_NAT_AND_FIREWALL_1_PID="$(docker inspect -f '{{ .State.Pid }}' peer-nat-and
 PEER_NAT_AND_FIREWALL_2_PID="$(docker inspect -f '{{ .State.Pid }}' peer-nat-and-firewall-2)"
 PEER_CGNAT_1_PID="$(docker inspect -f '{{ .State.Pid }}' peer-cgnat-1)"
 PEER_CGNAT_2_PID="$(docker inspect -f '{{ .State.Pid }}' peer-cgnat-2)"
+PEER_ALL_REACHABLE_PID="$(docker inspect -f '{{ .State.Pid }}' peer-all-reachable)"
 
 # setup internet
 create_internet
@@ -92,6 +93,19 @@ setup_firewall_in_container "${PEER_ONLY_FIREWALL_2_PID}"
 setup_firewall_in_container "${PEER_NAT_AND_FIREWALL_1_PID}"
 setup_firewall_in_container "${PEER_NAT_AND_FIREWALL_2_PID}"
 
+# directly connect all reachable container
+create_direct_connection  "${PEER_ALL_REACHABLE_PID}" "10.0.0.2/8"
+
 # directly connect the only firewall containers to internet (no NAT so no routers in between)
 create_direct_connection "${PEER_ONLY_FIREWALL_1_PID}" "10.0.1.2/8"
 create_direct_connection "${PEER_ONLY_FIREWALL_2_PID}" "10.0.1.3/8"
+
+# create NAT peers
+# first router
+create_router_and_connect_to_ns "1" "10.0.2.2/8" "${INTERNET_NS}"
+connect_container_to_router "${PEER_NAT_1_PID}" "192.168.1.2/24" "1"
+
+# second router
+create_router_and_connect_to_ns "2" "10.0.2.3/8" "${INTERNET_NS}"
+connect_container_to_router "${PEER_NAT_2_PID}" "192.168.1.2/24" "2"
+

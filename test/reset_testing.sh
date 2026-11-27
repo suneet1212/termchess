@@ -9,3 +9,6 @@ fi
 docker compose down
 
 ip netns del internet
+ip netns del r1
+ip netns del r2
+
